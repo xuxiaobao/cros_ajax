@@ -54,15 +54,16 @@ public class HttpClientUtil {
 		}
 	}
 	public static String doPost(String url_str, String param) {
-		return doPost(url_str,param,"");
+		return doPost(url_str,param,"", "");
 	}
 
-	public static String doPost(String url_str, String param,String token) {
+	public static String doPost(String url_str, String param,String token, String sign) {
 		HttpPost post = new HttpPost(url_str);
 		try {
 			post.setHeader("User-Agent", "agx.ims");
 			post.setHeader("Content-Type", "application/xml");
 			post.setHeader("4GGOGO-Auth-Token", token);
+			post.setHeader("HTTP-X-4GGOGO-Signature", sign);
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
 			post.setConfig(requestConfig);
@@ -96,14 +97,15 @@ public class HttpClientUtil {
 		return null;
 	}
 	public static String doGet(String url_str) {
-		return doGet(url_str,"");
+		return doGet(url_str,"","");
 	}
-	public static String doGet(String url_str,String token) {
+	public static String doGet(String url_str,String token, String sign) {
 		HttpGet get = new HttpGet(url_str);
 		try {
 			get.setHeader("User-Agent", "agx.ims");
-			get.setHeader("Content-Type", "application/xml;text/xml");
+			get.setHeader("Content-Type", "application/xml");
 			get.setHeader("4GGOGO-Auth-Token", token);
+			get.setHeader("HTTP-X-4GGOGO-Signature", sign);
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
 			get.setConfig(requestConfig);
