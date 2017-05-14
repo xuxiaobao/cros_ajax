@@ -76,7 +76,7 @@ public class MainController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public Object products() {
         if (!checkToken()) {
-            return null;
+            authToken();
         }
         String token = Constants.TokenMap.get("Token");
         String sign = DigestUtils.sha256Hex(Constants.AppSecret);
@@ -88,7 +88,7 @@ public class MainController {
     @RequestMapping(value = "/charge", method = RequestMethod.POST)
     public Object charge(String mobile, String productId) {
         if (!checkToken()) {
-            return null;
+            authToken();
         }
         StringBuilder builder = new StringBuilder();
         Date dt = new Date();
@@ -115,14 +115,13 @@ public class MainController {
     @RequestMapping(value = "/chargeRecord", method = RequestMethod.GET)
     public Object chargeRecord(String systemNum) {
         if (!checkToken()) {
-            return null;
+            authToken();
         }
         String token = Constants.TokenMap.get("Token");
         String sign = DigestUtils.sha256Hex(Constants.AppSecret);
         String url = "https://pdata.4ggogo.com/web-in/chargeRecords/".concat(systemNum).concat(".html");
         String s = HttpClientUtil.doGet(url,token,sign);
-        /*Map<String, Object> map = XmlUtil.xmlToMap(s);
-        return map;*/
-        return s;
+        Map<String, Object> map = XmlUtil.xmlToMap(s);
+        return map;
     }
 }
