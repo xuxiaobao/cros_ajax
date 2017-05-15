@@ -40,10 +40,10 @@ public class MainController {
         builder.append("<Sign>").append(sign).append("</Sign>");
         builder.append("</Authorization>");
         builder.append("</Request>");
-        String s = HttpClientUtil.doPost("https://pdata.4ggogo.com/web-in/auth.html", builder.toString());
-        if (StringUtils.isNotBlank(s)) {
+        Map<String, String> result = HttpClientUtil.doPost("http://www.nm.10086.cn/flowplat/auth.html", builder.toString());
+        if (StringUtils.isNotBlank(result.get("response"))) {
             try {
-                Document document = DocumentHelper.parseText(s);
+                Document document = DocumentHelper.parseText(result.get("response"));
                 Element root = document.getRootElement().element("Authorization");
                 String token = root.element("Token").getText();
                 String expiredTime = root.element("ExpiredTime").getText();
@@ -61,7 +61,7 @@ public class MainController {
         String expiredTime = Constants.TokenMap.get("ExpiredTime");
         if (StringUtils.isNotBlank(token)) {
             Date dt = DateUtil.parseDate(expiredTime);
-            long now = System.currentTimeMillis();
+            long now = System.currentTimeMillis()-1000;
             if (now >= dt.getTime()) {
                 if (authToken()) {
                     return true;
@@ -80,8 +80,8 @@ public class MainController {
         }
         String token = Constants.TokenMap.get("Token");
         String sign = DigestUtils.sha256Hex(Constants.AppSecret);
-        String s = HttpClientUtil.doGet("https://pdata.4ggogo.com/web-in/products.html",token,sign);
-        Map<String, Object> map = XmlUtil.xmlToMap(s);
+        Map<String, String> result = HttpClientUtil.doGet("http://www.nm.10086.cn/flowplat/products.html", token, sign);
+        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
         return map;
     }
 
@@ -105,9 +105,9 @@ public class MainController {
         String param = builder.toString();
         String token = Constants.TokenMap.get("Token");
         String sign = DigestUtils.sha256Hex(param.concat(Constants.AppSecret));
-        String s = HttpClientUtil.doPost("https://pdata.4ggogo.com/web-in/boss/charge.html", param, token, sign);
-        if (StringUtils.isNotBlank(s)) {
-            return XmlUtil.xmlToMap(s);
+        Map<String, String> result = HttpClientUtil.doPost("http://www.nm.10086.cn/flowplat/boss/charge.html", param, token, sign);
+        if (StringUtils.isNotBlank(result.get("response"))) {
+            return XmlUtil.xmlToMap(result.get("response"));
         }
         return null;
     }
@@ -119,9 +119,24 @@ public class MainController {
         }
         String token = Constants.TokenMap.get("Token");
         String sign = DigestUtils.sha256Hex(Constants.AppSecret);
-        String url = "https://pdata.4ggogo.com/web-in/chargeRecords/".concat(systemNum).concat(".html");
-        String s = HttpClientUtil.doGet(url,token,sign);
-        Map<String, Object> map = XmlUtil.xmlToMap(s);
+        String url = "http://www.nm.10086.cn/flowplat/chargeRecords/".concat(systemNum).concat(".html");
+        Map<String, String> result = HttpClientUtil.doGet(url, token, sign);
+        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
         return map;
     }
+
+    @RequestMapping(value = "/hlr", method = RequestMethod.GET)
+    public Object userHlr(String mobile) {
+        if (!checkToken()) {
+            authToken();
+        }
+        String token = Constants.TokenMap.get("Token");
+        String sign = DigestUtils.sha256Hex(Constants.AppSecret);
+        String url = "http://www.nm.10086.cn/flowplat/user/".concat(mobile).concat("hlr");
+        Map<String, String> result = HttpClientUtil.doGet(url, token, sign);
+        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
+        System.out.println(result);
+        return map;
+    }
+
 }

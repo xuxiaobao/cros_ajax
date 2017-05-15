@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,11 +54,12 @@ public class HttpClientUtil {
 
 		}
 	}
-	public static String doPost(String url_str, String param) {
+	public static Map<String, String> doPost(String url_str, String param) {
 		return doPost(url_str,param,"", "");
 	}
 
-	public static String doPost(String url_str, String param,String token, String sign) {
+	public static Map<String, String> doPost(String url_str, String param,String token, String sign) {
+		Map<String, String> map = new HashMap<String, String>();
 		HttpPost post = new HttpPost(url_str);
 		try {
 			post.setHeader("User-Agent", "agx.ims");
@@ -69,14 +71,15 @@ public class HttpClientUtil {
 			post.setConfig(requestConfig);
 			post.setEntity(new StringEntity(param, encoding));
 			CloseableHttpResponse response = httpclient.execute(post);
-
+			map.put("status", String.valueOf(response.getStatusLine().getStatusCode()));
+			System.out.println("post======="+response.getStatusLine().getStatusCode());
 			try {
-				System.out.println(response.getStatusLine().getStatusCode());
 				if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
 					HttpEntity entity = response.getEntity();
 					try {
 						if (entity != null) {
-							return EntityUtils.toString(entity, encoding);
+							map.put("response", EntityUtils.toString(entity, encoding));
+							return map;
 						}
 					} finally {
 						if (entity != null) {
@@ -96,10 +99,11 @@ public class HttpClientUtil {
 		}
 		return null;
 	}
-	public static String doGet(String url_str) {
+	public static Map<String, String> doGet(String url_str) {
 		return doGet(url_str,"","");
 	}
-	public static String doGet(String url_str,String token, String sign) {
+	public static Map<String, String> doGet(String url_str,String token, String sign) {
+		Map<String, String> map = new HashMap<String, String>();
 		HttpGet get = new HttpGet(url_str);
 		try {
 			get.setHeader("User-Agent", "agx.ims");
@@ -110,12 +114,14 @@ public class HttpClientUtil {
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
 			get.setConfig(requestConfig);
 			CloseableHttpResponse response = httpclient.execute(get);
-			System.out.println("======="+response.getStatusLine().getStatusCode());
+			map.put("status", String.valueOf(response.getStatusLine().getStatusCode()));
+			System.out.println("get======="+response.getStatusLine().getStatusCode());
 			try {
 				HttpEntity entity = response.getEntity();
 				try {
 					if (entity != null) {
-						return EntityUtils.toString(entity, encoding);
+						map.put("response", EntityUtils.toString(entity, encoding));
+						return map;
 					}
 				} finally {
 					if (entity != null) {

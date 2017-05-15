@@ -127,15 +127,18 @@ public class XmlUtil {
 		 * xml转map
 		 */
 		String xml = "<Response><Datetime>2016-03-19T15:43:33.136+08:00</Datetime><Datetime>2016-03-19T15:43:33.136+08:00</Datetime></Response>";
-		Map<String, Object> map = XmlUtil.xmlToMap(xml);
+		/*Map<String, Object> map = XmlUtil.xmlToMap(xml);
 		System.out.println(map);
 		if (map.get("Response") instanceof Map) {
 			System.out.println("true");
 		}
-		/**
+		*//**
 		 * map转xml
-		 */
+		 *//*
 		String s = XmlUtil.mapToXml(map);
-		System.out.println(s);
+		System.out.println(s);*/
+		Document document = DocumentHelper.parseText(xml);
+		String v = document.getRootElement().element("Datetime").getText();
+		System.out.println(v);
 	}
 }
