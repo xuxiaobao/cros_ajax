@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class DateUtil {
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-    private static DateFormat normal = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static DateFormat normal = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     public static String formatDate(Date dt) {
         /*StringBuffer UTCTimeBuffer = new StringBuffer();
         // 1、取得本地时间：
