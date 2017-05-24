@@ -1,5 +1,6 @@
 package com.cros.config;
 
+import com.cros.util.DESUtil;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 /**
@@ -9,8 +10,10 @@ public class MyEncryptPlaceHolderConfigurer extends PropertyPlaceholderConfigure
     private String[] encryptPropName = {"userName", "password"};
     @Override
     protected String convertProperty(String propertyName, String propertyValue) {
-
-        return super.convertProperty(propertyName, propertyValue);
+        if (isEncryptProp(propertyName)) {
+            return DESUtil.encrypt(propertyValue);
+        }
+        return propertyValue;
     }
 
     private boolean isEncryptProp(String name) {

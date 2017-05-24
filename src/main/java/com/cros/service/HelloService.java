@@ -1,13 +1,22 @@
 package com.cros.service;
 
+import com.cros.config.ApplicationContextHelper;
+import com.cros.util.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2017/5/19.
  */
 @Service
 public class HelloService {
+
     /**
      * 上次任务执行结束时间到下次任务开始时间，间隔是2000毫秒
      */
@@ -42,8 +51,8 @@ public class HelloService {
      *
      * 下面配置2秒执行一次
      */
-    @Scheduled(cron = "0-6/2 * * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     public void task() {
-        System.out.println("cron schedule start");
+        System.out.println(ApplicationContextHelper.getMessage("userName", new Object[]{"success"}, Locale.US));
     }
 }

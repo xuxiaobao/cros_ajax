@@ -2,8 +2,25 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean class="com.cros.config.MyEncryptPlaceHolderConfigurer">
+    <!--<bean class="com.cros.config.MyEncryptPlaceHolderConfigurer">
         <property name="location" value="classpath:config.properties" />
         <property name="fileEncoding" value="utf-8" />
+    </bean>-->
+    <!--重新启动加载资源-->
+    <!--<bean name="myResource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>config</value>
+            </list>
+        </property>
+    </bean>-->
+    <!--自动刷新加载资源-->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:config</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="5"/>
     </bean>
 </beans>
