@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MailSendListener implements ApplicationListener<MailSendEvent> {
-    //对mailsendevent时间进行处理
+    //对mailsendevent事件进行处理
     @Override
     public void onApplicationEvent(MailSendEvent event) {
         MailSendEvent mse = event;

@@ -24,4 +24,15 @@ public class Test {
         new Thread(new MyRunnable("hao")).start();
     }
 
+
+    public static void add(Integer a) {
+        a += 2;
+    }
+
+    public static void main(String[] args) {
+        Integer a = new Integer(0);
+        add(a);
+        System.out.println(a);
+    }
+
 }

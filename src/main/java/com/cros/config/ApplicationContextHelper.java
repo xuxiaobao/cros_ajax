@@ -11,7 +11,7 @@ import java.util.Locale;
 /**
  * Created by Administrator on 2017/5/24.
  */
-@Component
+//@Component
 public class ApplicationContextHelper implements ApplicationContextAware {
     private static ApplicationContext appCtx;
     @Override
