@@ -21,11 +21,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.nio.charset.CodingErrorAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * 统一的http请求工具类
+ */
 public class HttpClientUtil {
 	private static final String encoding = "UTF-8";
 	private final static int connectTimeout = 40000;
@@ -54,32 +54,32 @@ public class HttpClientUtil {
 
 		}
 	}
-	public static Map<String, String> doPost(String url_str, String param) {
-		return doPost(url_str,param,"", "");
+	public static String doPost(String url_str, String param) {
+		return doPost(url_str,param,null);
 	}
 
-	public static Map<String, String> doPost(String url_str, String param,String token, String sign) {
-		Map<String, String> map = new HashMap<String, String>();
+	public static String doPost(String url_str, String param, Map<String, String> headers) {
 		HttpPost post = new HttpPost(url_str);
 		try {
-			post.setHeader("User-Agent", "agx.ims");
-			post.setHeader("Content-Type", "application/xml");
-			post.setHeader("4GGOGO-Auth-Token", token);
-			post.setHeader("HTTP-X-4GGOGO-Signature", sign);
+			/*
+			设置头信息
+			 */
+			if (headers != null) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					post.setHeader(entry.getKey(), entry.getValue());
+				}
+			}
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
 			post.setConfig(requestConfig);
 			post.setEntity(new StringEntity(param, encoding));
 			CloseableHttpResponse response = httpclient.execute(post);
-			map.put("status", String.valueOf(response.getStatusLine().getStatusCode()));
-			System.out.println("post======="+response.getStatusLine().getStatusCode());
 			try {
 				if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
 					HttpEntity entity = response.getEntity();
 					try {
 						if (entity != null) {
-							map.put("response", EntityUtils.toString(entity, encoding));
-							return map;
+							return EntityUtils.toString(entity, encoding);
 						}
 					} finally {
 						if (entity != null) {
@@ -99,29 +99,27 @@ public class HttpClientUtil {
 		}
 		return null;
 	}
-	public static Map<String, String> doGet(String url_str) {
-		return doGet(url_str,"","");
+	public static String doGet(String url_str) {
+		return doGet(url_str,null);
 	}
-	public static Map<String, String> doGet(String url_str,String token, String sign) {
+	public static String doGet(String url_str,Map<String, String> headers) {
 		Map<String, String> map = new HashMap<String, String>();
 		HttpGet get = new HttpGet(url_str);
 		try {
-			get.setHeader("User-Agent", "agx.ims");
-			get.setHeader("Content-Type", "application/xml");
-			get.setHeader("4GGOGO-Auth-Token", token);
-			get.setHeader("HTTP-X-4GGOGO-Signature", sign);
+			if (headers != null) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					get.setHeader(entry.getKey(), entry.getValue());
+				}
+			}
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
 			get.setConfig(requestConfig);
 			CloseableHttpResponse response = httpclient.execute(get);
-			map.put("status", String.valueOf(response.getStatusLine().getStatusCode()));
-			System.out.println("get======="+response.getStatusLine().getStatusCode());
 			try {
 				HttpEntity entity = response.getEntity();
 				try {
 					if (entity != null) {
-						map.put("response", EntityUtils.toString(entity, encoding));
-						return map;
+						return EntityUtils.toString(entity, encoding);
 					}
 				} finally {
 					if (entity != null) {
@@ -191,7 +189,6 @@ public class HttpClientUtil {
 			httpPost.releaseConnection();
 		}
 		return responseContent;
-
 	}
 
 }
