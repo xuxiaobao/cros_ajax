@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -74,10 +75,14 @@ public class MainController {
         builder.append("<Sign>").append(sign).append("</Sign>");
         builder.append("</Authorization>");
         builder.append("</Request>");
-        Map<String, String> result = HttpClientUtil.doPost(Constants.SERVER_URL+"auth.html", builder.toString());
-        if (StringUtils.isNotBlank(result.get("response"))) {
+
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/xml");
+
+        String result = HttpClientUtil.doPost(Constants.SERVER_URL+"auth.html", builder.toString(), headers);
+        if (StringUtils.isNotBlank(result)) {
             try {
-                String response = XmlUtil.replaceBlank(result.get("response"));
+                String response = XmlUtil.replaceBlank(result);
                 Document document = DocumentHelper.parseText(response);
                 Element root = document.getRootElement().element("Authorization");
                 String token = root.element("Token").getText();
@@ -91,6 +96,7 @@ public class MainController {
         }
         return false;
     }
+
     @RequestMapping(value = "/charge", method = RequestMethod.POST)
     public Object charge(String mobile, String productId) throws Exception {
         /*
@@ -266,10 +272,12 @@ public class MainController {
         if (!checkToken()) {
             authToken();
         }
-        String token = Constants.TokenMap.get("Token");
-        String sign = DigestUtils.sha256Hex(Constants.AppSecret);
-        Map<String, String> result = HttpClientUtil.doGet(Constants.SERVER_URL+"products.html", token, sign);
-        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/xml;charset=utf-8");
+        headers.put("4GGOGO-Auth-Token", Constants.TokenMap.get("Token"));
+        headers.put("HTTP-X-4GGOGO-Signature", DigestUtils.sha256Hex(Constants.AppSecret));
+        String result = HttpClientUtil.doGet(Constants.SERVER_URL+"products.html",headers);
+        Map<String, Object> map = XmlUtil.xmlToMap(result);
         return map;
     }
 
@@ -315,11 +323,13 @@ public class MainController {
         if (!checkToken()) {
             authToken();
         }
-        String token = Constants.TokenMap.get("Token");
-        String sign = DigestUtils.sha256Hex(Constants.AppSecret);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/xml;charset=utf-8");
+        headers.put("4GGOGO-Auth-Token", Constants.TokenMap.get("Token"));
+        headers.put("HTTP-X-4GGOGO-Signature", DigestUtils.sha256Hex(Constants.AppSecret));
         String url = Constants.SERVER_URL+"chargeRecords/".concat(systemNum).concat(".html");
-        Map<String, String> result = HttpClientUtil.doGet(url, token, sign);
-        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
+        String result = HttpClientUtil.doGet(url,headers);
+        Map<String, Object> map = XmlUtil.xmlToMap(result);
         return map;
     }
 
@@ -328,11 +338,13 @@ public class MainController {
         if (!checkToken()) {
             authToken();
         }
-        String token = Constants.TokenMap.get("Token");
-        String sign = DigestUtils.sha256Hex(Constants.AppSecret);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/xml;charset=utf-8");
+        headers.put("4GGOGO-Auth-Token", Constants.TokenMap.get("Token"));
+        headers.put("HTTP-X-4GGOGO-Signature", DigestUtils.sha256Hex(Constants.AppSecret));
         String url = Constants.SERVER_URL+"user/".concat(mobile).concat("hlr");
-        Map<String, String> result = HttpClientUtil.doGet(url, token, sign);
-        Map<String, Object> map = XmlUtil.xmlToMap(result.get("response"));
+        String result = HttpClientUtil.doGet(url, headers);
+        Map<String, Object> map = XmlUtil.xmlToMap(result);
         System.out.println(result);
         return map;
     }
