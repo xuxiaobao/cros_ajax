@@ -1,0 +1,5 @@
+spring:
+  freemarker:
+    suffix: .html
+    template-loader-path: classpath:/templates/
+    charset: utf-8
