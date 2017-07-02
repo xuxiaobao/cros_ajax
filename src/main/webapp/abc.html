@@ -5,34 +5,72 @@
     <title>富文本编辑器</title>
     <link href="http://cdn.gbtags.com/twitter-bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     <link href="http://cdn.gbtags.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="css/summernote.css" rel="stylesheet" type="text/css"/>
+    <link href="dist/summernote.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-    <div name="pager" id="editor" style="width: 100px;">
-        abc
+
+<form role="form" id="moduleForm">
+    <div class="form-group">
+        <label for="title">模块名称</label>
+        <input type="text" class="form-control" id="title" placeholder="请输入名称">
     </div>
-    <button type="button" onclick="alertFunction()">submit</button>
+    <div class="form-group">
+        <label for="title">模块详情</label>
+        <div id="editor">
+
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-default">提交</button>
+</form>
 
 <script src="http://cdn.gbtags.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://cdn.gbtags.com/twitter-bootstrap/3.2.0/js/bootstrap.js"></script>
-<script src="js/summernote.min.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="dist/summernote.js"></script>
 <script>
-    $('#editor').summernote({
-        onImageUpload: function (files, editor, $editable) {
-            var formData = new FormData();
-            formData.append('file',files[0]);
-            $.ajax({
-                url : 'upload',//后台文件上传接口
-                type : 'POST',
-                data : formData,
-                processData : false,
-                contentType : false,
-                success : function(data) {
-
+    $(document).ready(function () {
+        $("#editor").summernote({
+            height:400,                 // set editor height
+            callbacks : {
+                onImageUpload: function(files,editor, $editable) {      //onImageUpload代表图片上传事件，默认将图片变为base64的那个事件
+                    var data=new FormData();        //html5提供的formdata对象，将图片加载为数据的容器
+                    data.append('file',files[0]);  //加载选中的第一张图片，并给这图片数据标记一个'image_up'的名称
+                    //调用上传图片
+                    $.ajax({
+                        url: '/upload',     //上传图片请求的路径
+                        method: 'POST',            //方法
+                        data:data,                 //数据
+                        processData: false,        //告诉jQuery不要加工数据
+                        contentType: false,        //<code class="javascript comments"> 告诉jQuery,在request head里不要设置Content-Type
+                        success: function(data) {  //图片上传成功之后，对返回来的数据要做的事情
+                            $("#editor").summernote('insertImage',data.url);       //调用内部api——insertImage以路径的形式插入图片到文本编辑区
+                        }
+                    });
                 }
-            });
-        }
+            }
+            //上传图片回调结束
+        });
+
+        $('#moduleForm').validate({
+            submitHandler : function () {
+                var title = $('#title').val();
+                var detail = $('#editor').code();
+                var param = {"title":title,"detail":detail};
+                $.ajax({
+                    url:'/module/add',
+                    type:'post',
+                    contentType: "application/json",
+                    dataType:'json',
+                    data:JSON.stringify(param),
+                    success:function (data) {
+                        alert(data.code);
+                    }
+                })
+            }
+        });
     });
+
 </script>
 </body>
 </html>

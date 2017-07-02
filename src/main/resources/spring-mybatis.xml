@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
                 p:driverClassName="com.mysql.jdbc.Driver"
-                p:url="jdbc:mysql://localhost:3306"
+                p:url="jdbc:mysql://localhost:3306/abs"
                 p:username="root"
                 p:password="root"
         ></bean>
@@ -13,11 +13,11 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSource"
           p:configLocation="classpath:mybatis.xml"
-          p:typeAliases="com.cros.domain"
+          p:typeAliasesPackage="com.cros.pojo"
     ></bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
-        p:basePackage=""
+        p:basePackage="com.cros.dao.mapper"
         p:sqlSessionFactory-ref="sqlSessionFactory"
     ></bean>
 </beans>
