@@ -1,5 +1,5 @@
 spring:
   freemarker:
-    suffix: .html
+    suffix: .ftl
     template-loader-path: classpath:/templates/
     charset: utf-8
