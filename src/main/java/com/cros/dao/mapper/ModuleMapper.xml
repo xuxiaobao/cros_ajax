@@ -11,4 +11,8 @@
     <select id="getModule" parameterType="int" resultType="Module">
         SELECT id, parentId, title, detail, uid, createTime FROM t_module WHERE id = #{id}
     </select>
+
+    <select id="getsModule" resultType="Module">
+        SELECT id, title FROM t_module
+    </select>
 </mapper>
