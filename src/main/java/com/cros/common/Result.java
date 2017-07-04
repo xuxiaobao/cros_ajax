@@ -31,8 +31,9 @@ public class Result {
         this.data = data;
     }
 
-    public void set(int code, String data) {
+    public Result set(int code, String data) {
         this.code = code;
         this.data = data;
+        return this;
     }
 }

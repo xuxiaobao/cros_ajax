@@ -57,38 +57,44 @@
 
         <!-- page heading start-->
         <div class="page-heading">
-            Page Tittle goes here
+            模块管理
         </div>
         <!-- page heading end-->
 
         <!--body wrapper start-->
         <div class="wrapper">
-            Body contents goes here
+
+            <table class="table table-striped">
+                <caption>一级模块列表</caption>
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>二级模块</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <#if list??>
+                    <#list list as item>
+                    <tr>
+                        <td>${item_index+1}</td>
+                        <td>${item['title']}</td>
+                        <td><a href="/back/second.html?col=${item['id']}">查看</a></td>
+                    </tr>
+                    </#list>
+                </#if>
+                </tbody>
+            </table>
+
         </div>
         <!--body wrapper end-->
 
-        <!--footer section start-->
-        <footer class="sticky-footer">
-            2014 &copy; AdminEx by <a href="http://www.mycodes.net/" target="_blank">源码之家</a>
-        </footer>
-        <!--footer section end-->
+        <#include "./footer.ftl" />
 
 
     </div>
     <!-- main content end-->
 </section>
-
-<!-- Placed js at the end of the document so the pages load faster -->
-<script src="/js/jquery-1.10.2.min.js"></script>
-<script src="/js/jquery-ui-1.9.2.custom.min.js"></script>
-<script src="/js/jquery-migrate-1.2.1.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/modernizr.min.js"></script>
-<script src="/js/jquery.nicescroll.js"></script>
-
-
-<!--common scripts for all pages-->
-<script src="/js/scripts.js"></script>
 
 </body>
 </html>

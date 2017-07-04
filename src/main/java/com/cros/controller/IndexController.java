@@ -27,6 +27,11 @@ public class IndexController {
     @Autowired
     private ModuleMenuService moduleMenuService;
 
+    @RequestMapping(value = "/login")
+    public String login() {
+        return "login";
+    }
+
     @RequestMapping(value = "/index")
     public String index(ModelMap modelMap) {
 
