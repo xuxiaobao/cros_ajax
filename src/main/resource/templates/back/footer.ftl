@@ -11,7 +11,8 @@
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/modernizr.min.js"></script>
 <script src="/js/jquery.nicescroll.js"></script>
-
+<script src="/dist/summernote.js"></script>
+<script src="/js/jquery.validate.min.js"></script>
 
 <!--common scripts for all pages-->
 <script src="/js/scripts.js"></script>

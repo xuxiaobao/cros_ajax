@@ -13,4 +13,6 @@ public interface ModuleMapper {
     Module getModule(int id);
 
     List<Module> getsModule();
+
+    int editModule(Module module);
 }

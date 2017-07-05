@@ -5,7 +5,7 @@ package com.cros.common;
  */
 public class Result {
     private int code;
-    private String data;
+    private Object data;
 
     public Result() {
     }
@@ -23,7 +23,7 @@ public class Result {
         this.code = code;
     }
 
-    public String getData() {
+    public Object getData() {
         return data;
     }
 
@@ -31,7 +31,7 @@ public class Result {
         this.data = data;
     }
 
-    public Result set(int code, String data) {
+    public Result set(int code, Object data) {
         this.code = code;
         this.data = data;
         return this;

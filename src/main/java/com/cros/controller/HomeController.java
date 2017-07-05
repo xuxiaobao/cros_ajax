@@ -20,7 +20,7 @@ public class HomeController {
     @RequestMapping(value = "/back/home")
     public String home(ModelMap modelMap) {
         List<Module> list = moduleService.getsModule();
-
+        //一级模块列表
         modelMap.put("list", list);
         return "back/index";
     }

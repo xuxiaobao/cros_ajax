@@ -15,6 +15,16 @@ public class ModuleService {
     @Autowired
     public ModuleMapper moduleMapper;
 
+    public int addModule(Module module) {
+        try {
+            int i = moduleMapper.addModule(module);
+            return i;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public Module getModule(int id) {
         try {
             return moduleMapper.getModule(id);
@@ -31,5 +41,15 @@ public class ModuleService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int editModule(Module module) {
+        try {
+            int i = moduleMapper.editModule(module);
+            return i;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

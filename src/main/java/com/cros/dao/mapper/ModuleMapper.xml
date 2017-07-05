@@ -15,4 +15,8 @@
     <select id="getsModule" resultType="Module">
         SELECT id, title FROM t_module
     </select>
+
+    <update id="editModule" parameterType="Module">
+        UPDATE t_module SET title = #{title}, detail = #{detail} WHERE id = #{id}
+    </update>
 </mapper>
