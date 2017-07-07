@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cros.dao.mapper.MessageMapper">
+    <select id="getsMessage" resultType="Message">
+      SELECT id, name, phone, address, createTime FROM t_message WHERE check = 0
+    </select>
+
+    <select id="getMessage" parameterType="int" resultType="Message">
+        SELECT id, name, phone, address, message FROM t_messsage WHERE id = #{id}
+    </select>
+
+    <insert id="addMessage" parameterType="Message">
+        INSERT INTO t_message(name, phone, address, message, createTime) VALUES
+        (#{name}, #{phone}, #{address}, #{message}, #{createTime})
+    </insert>
+
+    <update id="updateMessageCheck" parameterType="int">
+        UPDATE t_message SET check = 1 WHERE id = #{id}
+    </update>
+</mapper>
