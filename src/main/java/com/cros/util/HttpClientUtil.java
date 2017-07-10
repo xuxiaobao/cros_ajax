@@ -9,6 +9,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.*;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -54,50 +55,51 @@ public class HttpClientUtil {
 
 		}
 	}
+
+	public static String doPost(String url_str, Map<String, String> params) {
+		return doPost(url_str, params, null);
+	}
+
+	public static String doPost(String url_str, Map<String, String> params, Map<String, String> headers) {
+		HttpPost post = new HttpPost(url_str);
+		try {
+			if (params != null) {
+				List<NameValuePair> form = new ArrayList<NameValuePair>();
+				for (Map.Entry<String, String> entry : params.entrySet()) {
+					form.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+				}
+				post.setEntity(new UrlEncodedFormEntity(form, encoding));
+			}
+			if (headers != null) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					post.setHeader(entry.getKey(), entry.getValue());
+				}
+			}
+			String s = httpRequest(post);
+			return s;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static String doPost(String url_str, String param) {
 		return doPost(url_str,param,null);
 	}
 
 	public static String doPost(String url_str, String param, Map<String, String> headers) {
 		HttpPost post = new HttpPost(url_str);
-		try {
-			/*
-			设置头信息
-			 */
-			if (headers != null) {
-				for (Map.Entry<String, String> entry : headers.entrySet()) {
-					post.setHeader(entry.getKey(), entry.getValue());
-				}
+		/*
+		设置头信息
+		 */
+		if (headers != null) {
+			for (Map.Entry<String, String> entry : headers.entrySet()) {
+				post.setHeader(entry.getKey(), entry.getValue());
 			}
-			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
-					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
-			post.setConfig(requestConfig);
-			post.setEntity(new StringEntity(param, encoding));
-			CloseableHttpResponse response = httpclient.execute(post);
-			try {
-				if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
-					HttpEntity entity = response.getEntity();
-					try {
-						if (entity != null) {
-							return EntityUtils.toString(entity, encoding);
-						}
-					} finally {
-						if (entity != null) {
-							entity.getContent().close();
-						}
-					}
-				}
-			} finally {
-				if (response != null) {
-					response.close();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			post.releaseConnection();
 		}
-		return null;
+		post.setEntity(new StringEntity(param,encoding));
+		String s = httpRequest(post);
+		return s;
 	}
 	public static String doGet(String url_str) {
 		return doGet(url_str,null);
@@ -105,16 +107,21 @@ public class HttpClientUtil {
 	public static String doGet(String url_str,Map<String, String> headers) {
 		Map<String, String> map = new HashMap<String, String>();
 		HttpGet get = new HttpGet(url_str);
-		try {
-			if (headers != null) {
-				for (Map.Entry<String, String> entry : headers.entrySet()) {
-					get.setHeader(entry.getKey(), entry.getValue());
-				}
+		if (headers != null) {
+			for (Map.Entry<String, String> entry : headers.entrySet()) {
+				get.setHeader(entry.getKey(), entry.getValue());
 			}
+		}
+		String s = httpRequest(get);
+		return s;
+	}
+
+	public static String httpRequest(HttpRequestBase request) {
+		try {
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setConnectTimeout(connectTimeout)
 					.setConnectionRequestTimeout(connectTimeout).setExpectContinueEnabled(false).build();
-			get.setConfig(requestConfig);
-			CloseableHttpResponse response = httpclient.execute(get);
+			request.setConfig(requestConfig);
+			CloseableHttpResponse response = httpclient.execute(request);
 			try {
 				HttpEntity entity = response.getEntity();
 				try {
@@ -136,7 +143,7 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			get.releaseConnection();
+			request.releaseConnection();
 		}
 		return null;
 	}
