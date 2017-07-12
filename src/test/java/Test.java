@@ -19,6 +19,7 @@ public class Test {
         JSONObject object = JSON.parseObject(json);
         for (Map.Entry<String, Object> entry : object.entrySet()) {
             System.out.println(entry.getKey() + ":" + entry.getValue());
+	    System.out.println("test");
         }
     }
 }
